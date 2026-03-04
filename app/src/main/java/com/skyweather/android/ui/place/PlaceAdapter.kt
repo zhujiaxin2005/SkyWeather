@@ -25,15 +25,27 @@ RecyclerView.Adapter<PlaceAdapter.ViewHolder>(){
         holder.itemView.setOnClickListener {
             val position = holder.adapterPosition
             val place = placeList[position]
-            val intent = Intent(parent.context, WeatherActivity::class.java).apply {
-                putExtra("location_lng", place.location.lng)
-                putExtra("location_lat", place.location.lat)
+            val activity = fragment.activity
+            if(activity is WeatherActivity){
+                activity.weatherActivityBinding.drawerLayout.closeDrawers()
                 val split = place.name.split(" ")
-                putExtra("place_name", split[split.size - 1])
+                activity.viewModel.placeName = split[split.size - 1]
+                activity.viewModel.locationLat = place.location.lat
+                activity.viewModel.locationLng = place.location.lng
+                activity.refreshWeather()
+                // 清空输入框
+                fragment.binding.searchPlaceEdit.text.clear()
+            }else{
+                val intent = Intent(parent.context, WeatherActivity::class.java).apply {
+                    putExtra("location_lng", place.location.lng)
+                    putExtra("location_lat", place.location.lat)
+                    val split = place.name.split(" ")
+                    putExtra("place_name", split[split.size - 1])
+                }
+                fragment.startActivity(intent)
+                fragment.activity?.finish()
             }
             fragment.viewModel.savePlace(place)
-            fragment.startActivity(intent)
-            fragment.activity?.finish()
         }
         return holder
     }

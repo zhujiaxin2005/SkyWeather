@@ -10,13 +10,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.skyweather.android.MainActivity
 import com.skyweather.android.databinding.FragmentPlaceBinding
 import com.skyweather.android.ui.weather.WeatherActivity
 
 class PlaceFragment: Fragment() {
 
     private var _binding: FragmentPlaceBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     val viewModel by lazy { ViewModelProvider(this).get(PlaceViewModel::class.java) }
 
@@ -33,7 +34,7 @@ class PlaceFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.isPlaceSaved()){
+        if(viewModel.isPlaceSaved() && activity is MainActivity){
             val place = viewModel.getSavedPlace()
             val intent = Intent(context, WeatherActivity::class.java).apply {
                 putExtra("location_lng", place.location.lng)
